@@ -1,43 +1,32 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 
-function useIsOnline(){
-  const [isOnline, setIsOnline] = useState(window.navigator.onLine);
-  useEffect(()=>{
-    window.addEventListener('online', ()=>setIsOnline(true));
-    window.addEventListener('offline', ()=>setIsOnline(false));
+function useMousePointer() {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => { setPosition({ x: e.clientX, y: e.clientY }) }
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
   });
 
-  return isOnline;
+  return position;
 }
 
 function App() {
 
-  const isOnline = useIsOnline();
-  if(isOnline){
-    return "You are connected";
-  }
+  const mousePointer = useMousePointer();
 
-  return "Disconnected, please connect to the internet"
+
 
   return (
     <>
-      {
-        loading ? <div>loading...</div> : allUsers.map(allUsers => <Track key={allUsers._id} allUsers={allUsers} />)
-      }
+      your mouse pointer is {mousePointer.x} {mousePointer.y}
     </>
   )
-}
-
-function Track({ allUsers }) {
-  return <div>
-    <div>
-      username : <b>{allUsers.username}</b>
-    </div>
-    <div>
-      password : {allUsers.password}
-    </div>
-  </div>
 }
 
 export default App
