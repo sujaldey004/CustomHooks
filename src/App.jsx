@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 
-function useMousePointer() {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e) => { setPosition({ x: e.clientX, y: e.clientY }) }
-
+function useInterval(fn, timeout) {
   useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove)
+    const value = setInterval(() => {
+      fn();
+    }, timeout);
+    
+    return ()=>{
+      clearInterval(value);
     }
-  });
-
-  return position;
+  }, [])
 }
 
 function App() {
 
-  const mousePointer = useMousePointer();
-
-
+  const [count, setCount] = useState(0);
+  useInterval(() => {
+    setCount(c => c + 1)
+  }, 1000)
 
   return (
     <>
-      your mouse pointer is {mousePointer.x} {mousePointer.y}
+      Timer is at {count}
     </>
   )
 }
