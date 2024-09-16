@@ -1,40 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 
+function useIsOnline(){
+  const [isOnline, setIsOnline] = useState(window.navigator.onLine);
+  useEffect(()=>{
+    window.addEventListener('online', ()=>setIsOnline(true));
+    window.addEventListener('offline', ()=>setIsOnline(false));
+  });
 
-function useAllUsers(n) {
-  const [allUsers, setAllUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const value = setInterval(() => {
-      axios.get("http://localhost:3000/api/v1/users").
-        then(res => {
-          setAllUsers(res.data.allUsers);
-          setLoading(false);
-          console.log("updated");
-        })
-    }, n * 1000)
-
-    axios.get("http://localhost:3000/api/v1/users").
-      then(res => {
-        setAllUsers(res.data.allUsers);
-        setLoading(false);
-        console.log("updated");
-      })
-
-    return () => {
-      clearInterval(value);
-    }
-
-  }, [n])
-
-  return { allUsers, loading }
+  return isOnline;
 }
 
 function App() {
 
-  const { allUsers, loading } = useAllUsers(5);
+  const isOnline = useIsOnline();
+  if(isOnline){
+    return "You are connected";
+  }
+
+  return "Disconnected, please connect to the internet"
 
   return (
     <>
